@@ -1,0 +1,13 @@
+Subject of piazza post Submission 2 from xxx
+make hw2-e823ab.zip
+Write writeup.pdf
+all printing must be done as %.13e
+estimate parameters of cpd-grid15x15-t100.txt and cpd-grid30x30-t100.txt
+syntax is estimate-params network-grid training-grid cpd-grid
+test estimate-params by estimate-params test_est_params_network.txt test_est_params_training.txt test_est_params_cpd.txt && diff test_est_params_cpd.txt test_est_params_cpd.txt.gold is empty
+alias t=estimate-params test_est_params_network.txt test_est_params_training.txt test_est_params_cpd.txt
+I printed out the parameters and then piped to tmp then did a diff to check that I am not missing out any parameters
+
+The total parameters are 31260
+diff <(sort test_est_params_cpd.txt) <(sort tmp) | grep "^>" | wc
+
