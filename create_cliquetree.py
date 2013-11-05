@@ -32,7 +32,7 @@ for t in range(0, T):
     col_string="PositionCol_%d"
     action_string="Action_%d"
     if t < T-1:
-        mega_clique=",".join([row_string%t, col_string%t, action_string%t, col_string%(t+1)])
+        mega_clique=",".join([row_string%t, col_string%t, action_string%t, col_string%(t+1), row_string%(t+1)])
     else:
         mega_clique=",".join([row_string%t, col_string%t, action_string%t])
     cliques.append(mega_clique)
