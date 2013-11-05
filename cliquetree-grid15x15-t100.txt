@@ -1,4 +1,4 @@
-1700
+1699
 PositionRow_0,PositionCol_0,Action_0,PositionCol_1,PositionRow_1
 ObserveWall_N_0,PositionRow_0,PositionCol_0
 ObserveLandmark1_N_0,PositionRow_0,PositionCol_0
@@ -1682,7 +1682,6 @@ ObserveWall_S_98,PositionRow_98,PositionCol_98
 ObserveLandmark1_S_98,PositionRow_98,PositionCol_98
 ObserveLandmark2_S_98,PositionRow_98,PositionCol_98
 ObserveLandmark3_S_98,PositionRow_98,PositionCol_98
-PositionRow_99,PositionCol_99,Action_99
 ObserveWall_N_99,PositionRow_99,PositionCol_99
 ObserveLandmark1_N_99,PositionRow_99,PositionCol_99
 ObserveLandmark2_N_99,PositionRow_99,PositionCol_99
@@ -3381,20 +3380,19 @@ PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- Observe
 PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark2_S_98,PositionRow_98,PositionCol_98
 PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark3_S_98,PositionRow_98,PositionCol_98
 PositionRow_97,PositionCol_97,Action_97,PositionCol_98,PositionRow_98 -- PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveWall_N_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark1_N_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark2_N_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark3_N_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveWall_E_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark1_E_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark2_E_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark3_E_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveWall_W_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark1_W_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark2_W_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark3_W_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveWall_S_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark1_S_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark2_S_99,PositionRow_99,PositionCol_99
-PositionRow_99,PositionCol_99,Action_99 -- ObserveLandmark3_S_99,PositionRow_99,PositionCol_99
-PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- PositionRow_99,PositionCol_99,Action_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveWall_N_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark1_N_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark2_N_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark3_N_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveWall_E_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark1_E_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark2_E_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark3_E_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveWall_W_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark1_W_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark2_W_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark3_W_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveWall_S_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark1_S_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark2_S_99,PositionRow_99,PositionCol_99
+PositionRow_98,PositionCol_98,Action_98,PositionCol_99,PositionRow_99 -- ObserveLandmark3_S_99,PositionRow_99,PositionCol_99

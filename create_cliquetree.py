@@ -23,7 +23,7 @@ T=find_out_number_of_time_steps(variables)
 L=find_out_number_of_landmarks(variables)
 #print L, T
 
-number_of_cliques=(4*L+4+1)*T
+number_of_cliques=(4*L+4+1)*T-1
 cliques=[]
 edges=[]
 previous_clique=None
@@ -33,18 +33,24 @@ for t in range(0, T):
     action_string="Action_%d"
     if t < T-1:
         mega_clique=",".join([row_string%t, col_string%t, action_string%t, col_string%(t+1), row_string%(t+1)])
+        cliques.append(mega_clique)
     else:
-        mega_clique=",".join([row_string%t, col_string%t, action_string%t])
-    cliques.append(mega_clique)
+        mega_clique=0
     for direction in ["N", "E", "W", "S"]:
         ob_clique=",".join(["ObserveWall_%s_%d"%(direction, t), row_string%t, col_string%t])
         cliques.append(ob_clique)
-        edges.append(" ".join([mega_clique, "--", ob_clique]))
+        if t < T-1:
+            edges.append(" ".join([mega_clique, "--", ob_clique]))
+        else:
+            edges.append(" ".join([previous_clique, "--", ob_clique]))
         for landmark in range(1, L+1):
             ob_clique=",".join(["ObserveLandmark%d_%s_%d"%(landmark, direction, t), row_string%t, col_string%t])
             cliques.append(ob_clique)
-            edges.append(" ".join([mega_clique, "--", ob_clique]))
-    if t > 0: #Add edge
+            if t < T-1:
+                edges.append(" ".join([mega_clique, "--", ob_clique]))
+            else:
+                edges.append(" ".join([previous_clique, "--", ob_clique]))
+    if t > 0 and t < T-1: #Add edge
         edges.append(" ".join([previous_clique, "--", mega_clique]))
     else:
         pass
