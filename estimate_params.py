@@ -80,6 +80,18 @@ def get_observation_prob_from_insane_input_file(file_name):
                 d[position][observation] /= float(d[position]["total"])
     return d        
 
+def find_out_number_of_landmarks(variables):
+    return max(int(v[15:].split("_")[0]) for v in variables if v.startswith("ObserveLandmark"))
+
+def find_out_number_of_time_steps(variables):
+    return 1+max(int(v[15:].split("_")[-1]) for v in variables if v.startswith("ObserveLandmark"))
+
+def find_out_number_of_row(variables):
+    return 1+max(int(v[12:]) for v in variables if v.startswith("PositionRow_"))
+
+def find_out_number_of_col(variables):
+    return 1+max(int(v[12:]) for v in variables if v.startswith("PositionCol_"))
+
 ####
 ## Command line input parsing 
 ####
@@ -87,112 +99,120 @@ network_file_name=sys.argv[1]
 training_file_name=sys.argv[2]
 output_cpd_file_name=sys.argv[3]
 
-
 nf=[e.strip() for e in open(network_file_name).readlines()]
 number_of_rv=int(nf[0])
-names_and_values_of_rv=[dict(name=e.split(" ")[0], values=e.split(" ")[1].split(",")) for e in nf[1:number_of_rv+1]]
 random_variables={}
-for e in names_and_values_of_rv:
-    random_variables[e["name"]]=dict(values=e["values"], context=[])
+for e in nf[1:number_of_rv+1]:
+    name=e.split(" ")[0]
+    values=e.split(" ")[1].split(",")
+    
+    random_variables[name]=dict(values=values, context=[])
 
+#print random_variables.keys()
+
+T=find_out_number_of_time_steps(random_variables.keys())
+L=find_out_number_of_landmarks(random_variables.keys())
+
+rows=find_out_number_of_row(random_variables.keys())
+cols=find_out_number_of_col(random_variables.keys())
+
+print L, T, rows, cols
 assert "PositionRow_1" in random_variables
 
 for e in nf[number_of_rv+1:]:
     [context, rv]=e.split(" -> ")
     random_variables[rv]["context"].append(context)
 
+transition_probs=get_transition_probs_from_the_insane_input_file(training_file_name)
+observation_prob=get_observation_prob_from_insane_input_file(training_file_name)
+
 ######
 ##Calculate how many variables do I have to estimate?
 #####
-cpd_to_estimate={}
-for rv,v in random_variables.items():
-    context_variables=v["context"]
-    possible_values_of_contexts=[random_variables[e]["values"] for e in context_variables]
-    if possible_values_of_contexts != []:
-        combinations_of_contexts=reduce(combine_two_lists, possible_values_of_contexts)
-    else:
-        combinations_of_contexts=[""]
-    for context in combinations_of_contexts:
-        for value in v["values"]:
-            #print "%(rv)s=%(value)s %(context)s"%dict(rv=rv, value=value, context=",".join(["=".join(e) for e in zip(context_variables, context)]))
-            cpd_to_estimate[rv+value+str(context)]=dict(rv=rv, value=value, context=dict(zip(context_variables, context)), context_string=str(context))
-
-landmarks=set([e["rv"][15] for e in cpd_to_estimate.values() if e["rv"].startswith("ObserveLandmark")])
-time_points=set(e["rv"][-1] for e in cpd_to_estimate.values())
-rows=int(max([e["value"] for e in cpd_to_estimate.values() if e["rv"].startswith("PositionRow")]))
-cols=int(max([e["value"] for e in cpd_to_estimate.values() if e["rv"].startswith("PositionCol")]))
-actions=set([e["value"] for e in cpd_to_estimate.values() if e["rv"].startswith("Action")])
+def yield_variable_combinations():
+    for rv,v in random_variables.items():
+        if not (rv.startswith("Action") or rv == "PositionRow_0" or rv == "PositionCol_0" ):
+            context_variables=v["context"]
+            possible_values_of_contexts=[random_variables[e]["values"] for e in context_variables]
+            if possible_values_of_contexts != []:
+                combinations_of_contexts=reduce(combine_two_lists, possible_values_of_contexts)
+                #print rv, context_variables, combinations_of_contexts
+                for context in combinations_of_contexts:
+                    for value in v["values"]:
+                        yield dict(rv=rv, value=value, context=dict(zip(context_variables, context)))
+            else:
+                #combinations_of_contexts=[""]
+                raise Exception("not good " + str(rv))
 
 
 output_file=open(output_cpd_file_name, "wb")
-transition_probs=get_transition_probs_from_the_insane_input_file(training_file_name)
-observation_prob=get_observation_prob_from_insane_input_file(training_file_name)
 ####
 ##Write the output file
 ####
-try:
-    for kk in cpd_to_estimate:
-        cpd=cpd_to_estimate[kk]
-        cpdrvm1=cpd["rv"][-1]
-        if cpd["rv"].startswith("Observe"):
-            row=cpd["context"]["PositionRow_"+cpdrvm1]
-            col=cpd["context"]["PositionCol_"+cpdrvm1]
-            assert random_variables[cpd["rv"]]["values"] == ["Yes", "No"] or random_variables[cpd["rv"]]["values"] == ["No", "Yes"]
-            rv_of_interest=cpd["rv"][:-2]
-            probability={}
-            probability["Yes"] = observation_prob[row+"_"+col][rv_of_interest]
-            probability["No"] = 1-probability["Yes"]
-            #print "value we are filtering on ", value
-            #print "Yes numerator regex ", restr
-            #print "Yes numerator ", numerator["Yes"]
-            for val_type in ["Yes", "No"]:
-                pval=probability[val_type]
-                c1="%(rv_of_interest)s_.=%(val_type)s PositionRow_.=%(row)s,PositionCol_.=%(col)s "%dict(row=row, col=col, rv_of_interest=rv_of_interest, val_type=val_type)
-                for time in time_points:
-                    o=c1.replace(".", time)+"%(pval).6f\n"%dict(pval=pval)
-                    output_file.write(o)
-                    #print o,
-                #command = 'grep "'+ c1 + '" test_est_params_cpd.txt.gold '
-                #print key, pval
-                #print command 
-                #os.system(command)
-        elif cpd["rv"].startswith("Position"):
-            rv=cpd["rv"]            
-            positional_context_key=filter(lambda x: x.startswith("Position"), cpd["context"].keys())[0]
-            action_context_key=filter(lambda x: x.startswith("Action"), cpd["context"].keys())[0]
-            pcv=int(cpd["context"][positional_context_key])
-            rvv=int(cpd["value"])
-            acv=cpd["context"][action_context_key]
-            if "Col" in positional_context_key:
-                limit=cols
-                key_prefix="col"
-            else:
-                limit=rows
-                key_prefix="row"
+for cpd in yield_variable_combinations():
+    split_rv=cpd["rv"].split("_")
+    time_value=split_rv[-1]
+    rv_of_interest="_".join(split_rv[:-1])
+    if cpd["rv"].startswith("Observe"):
+        
+        try:
+            row=cpd["context"]["PositionRow_"+time_value]
+        except :
+            import pdb; pdb.set_trace()
+        col=cpd["context"]["PositionCol_"+time_value]
+        assert random_variables[cpd["rv"]]["values"] == ["Yes", "No"] or random_variables[cpd["rv"]]["values"] == ["No", "Yes"]
+        
+        probability={}
+        probability["Yes"] = observation_prob[row+"_"+col][rv_of_interest]
+        probability["No"] = 1-probability["Yes"]
+        
+        
+        pval=probability[cpd["value"]]
+        output_string="%(rv_of_interest)s_%(time_value)s=%(val_type)s PositionRow_%(time_value)s=%(row)s,PositionCol_%(time_value)s=%(col)s %(pval).6f\n"%dict(row=row, col=col, rv_of_interest=rv_of_interest, val_type=cpd["value"], pval=pval, time_value=time_value)
+        output_file.write(output_string)
+                #print o,
+            #command = 'grep "'+ c1 + '" test_est_params_cpd.txt.gold '
+            #print key, pval
+            #print command 
+            #os.system(command)
+    elif cpd["rv"].startswith("Position"):
+        rv=cpd["rv"]            
+        positional_context_key=filter(lambda x: x.startswith("Position"), cpd["context"].keys())[0]
+        action_context_key=filter(lambda x: x.startswith("Action"), cpd["context"].keys())[0]
+        pcv=int(cpd["context"][positional_context_key])
+        rvv=int(cpd["value"])
+        acv=cpd["context"][action_context_key]
+        if "Col" in positional_context_key:
+            limit=cols
+            key_prefix="col"
+        else:
+            limit=rows
+            key_prefix="row"
 
-            estimated_prob_value=None
-            if rvv - pcv in [1, 1-limit]:
-                estimated_prob_value=transition_probs[acv][key_prefix+"_increase"]
-            elif rvv == pcv:
-                estimated_prob_value=transition_probs[acv][key_prefix+"_same"]
-            elif rvv -pcv in [-1, limit-1]:
-                estimated_prob_value=transition_probs[acv][key_prefix+"_decrease"]
-            else:
-                pass
-            if estimated_prob_value is not None:
-                output_string="%(rv)s=%(rvv)d %(positional_context_key)s=%(pcv)d,%(action_context_key)s=%(acv)s %(estimated_prob_value).6f\n"%dict(
-                    rv=rv,
-                    rvv=rvv,
-                    positional_context_key=positional_context_key,
-                    pcv=pcv,
-                    action_context_key=action_context_key,
-                    acv=acv,
-                    estimated_prob_value=estimated_prob_value,
-                    )
-                output_file.write(output_string)
+        estimated_prob_value=None
+        if rvv - pcv in [1, 1-limit]:
+            estimated_prob_value=transition_probs[acv][key_prefix+"_increase"]
+        elif rvv == pcv:
+            estimated_prob_value=transition_probs[acv][key_prefix+"_same"]
+        elif rvv -pcv in [-1, limit-1]:
+            estimated_prob_value=transition_probs[acv][key_prefix+"_decrease"]
         else:
             pass
-except:
-    pass
+        if estimated_prob_value is not None:
+            output_string="%(rv)s=%(rvv)d %(positional_context_key)s=%(pcv)d,%(action_context_key)s=%(acv)s %(estimated_prob_value).6f\n"%dict(
+                rv=rv,
+                rvv=rvv,
+                positional_context_key=positional_context_key,
+                pcv=pcv,
+                action_context_key=action_context_key,
+                acv=acv,
+                estimated_prob_value=estimated_prob_value,
+                )
+            #print output_string,
+            output_file.write(output_string)
+    else:
+        raise Exception("cant handle " + cpd["rv"])
+
+
 output_file.close()
 os.system("sort %s > tmp && uniq tmp > %s"%(output_cpd_file_name, output_cpd_file_name))
