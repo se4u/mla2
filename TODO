@@ -84,7 +84,7 @@ Running interesection property requires that for any variable, all nodes that co
  python create_cliquetree.py  f/network-grid10x10-t10.txt cliquetree-grid10x10-t10.txt 
  python create_cliquetree.py  f/network-grid10x10-t100.txt cliquetree-grid10x10-t100.txt
  python create_cliquetree.py  f/network-grid10x10-t1000.txt cliquetree-grid10x10-t1000.txt
- python create_cliquetree.py  f/network-grid15x15-t100.txt   cliquetree-grid15x15-t100.txt   
+ python create_cliquetree.py  f/network-grid15x15-t100.txt cliquetree-grid15x15-t100.txt   
  python create_cliquetree.py  f/network-grid25x25-t100.txt cliquetree-grid25x25-t100.txt
  python create_cliquetree.py  f/network-grid30x30-t100.txt cliquetree-grid30x30-t100.txt
  python create_cliquetree.py  f/network-grid40x40-t100.txt cliquetree-grid40x40-t100.txt
@@ -95,5 +95,3 @@ We have created a program called bayes-query-sp that answers queries
 about marginal distributions of a model using belief propagation.
 
 ./bayes-query-sp network_file cpd_file cliquetree_file queries_file
-
-This program requires
